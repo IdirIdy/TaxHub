@@ -85,7 +85,29 @@ then
 
     echo "Insertion de données de base"
     export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f data/taxhubdata.sql  &>> $LOG_DIR/installdb/install_db.log
-	
+
+    # HABITATS #
+
+    echo "Download and extract habref file..."
+    if [ ! -d '/tmp/habref/' ]
+    then
+        mkdir /tmp/habref
+    fi
+    if [ ! -f '/tmp/habref/HABREF_40.zip' ]
+    then
+      wget https://geonature.fr/data/inpn/habitats/HABREF_40.zip -P /tmp/habref
+    else
+      echo HABREF_40.zip exists
+    fi
+    unzip /tmp/habref/HABREF_40.zip -d /tmp/habref
+    echo "Creating 'habitat' schema..."
+    export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f data/habitat.sql &>> $LOG_DIR/installdb/install_db.log
+
+    echo "Inserting INPN habitat data... "
+    export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -c "\copy ref_habitat.typoref FROM '/tmp/habref/TYPOREF_40.csv' with (format csv,header true, delimiter ';');" &>> var/log/install_typoref_data.log
+    export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -c "\copy ref_habitat.habref FROM '/tmp/habref/HABREF_40.csv' with (format csv,header true, delimiter ';');" &>> var/log/install_habref_data.log
+
+
     if $insert_geonatureatlas_data
     then
         echo "Insertion de données nécessaires à GeoNature-atlas"
