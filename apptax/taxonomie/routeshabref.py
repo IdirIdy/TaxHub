@@ -65,16 +65,13 @@ def get_habref_autocomplete(id_list):
     search_name = request.args.get("search_name")
     q = (
         db.session.query(
-            Habref,
-            func.similarity(Habref.lb_hab_fr_complet, search_name).label("idx_trgm"),
+            Habref, func.similarity(Habref.lb_hab_fr, search_name).label("idx_trgm")
         )
         .join(CorListHabitat, Habref.cd_hab == CorListHabitat.cd_hab)
         .filter(CorListHabitat.id_list == id_list)
     )
     search_name = search_name.replace(" ", "%")
-    q = q.filter(Habref.lb_hab_fr_complet.ilike("%" + search_name + "%")).order_by(
-        desc("idx_trgm")
-    )
+    q = q.filter(Habref.lb_hab_fr.ilike(search_name + "%")).order_by(desc("idx_trgm"))
 
     limit = request.args.get("limit", 20)
     data = q.limit(limit).all()

@@ -105,7 +105,15 @@ then
 
     echo "Inserting INPN habitat data... "
     export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -c "\copy ref_habitat.typoref FROM '/tmp/habref/TYPOREF_40.csv' with (format csv,header true, delimiter ';');" &>> var/log/install_typoref_data.log
-    export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -c "\copy ref_habitat.habref FROM '/tmp/habref/HABREF_40.csv' with (format csv,header true, delimiter ';');" &>> var/log/install_habref_data.log
+    export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -c "\copy ref_habitat.habref FROM '/tmp/habref/HABREF_NOHTML_40.csv' with (format csv,header true, delimiter ';');" &>> var/log/install_habref_data.log
+    # corespondance hab
+    export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -c "\copy ref_habitat.habref FROM '/tmp/habref/HABREF_CORRESP_HAB_40.csv' with (format csv,header true, delimiter ';');" &>> var/log/install_habref_data.log
+    # corespodance taxon
+    export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -c "\copy ref_habitat.habref FROM '/tmp/habref/HABREF_CORRESP_TAXON_40.csv' with (format csv,header true, delimiter ';');" &>> var/log/install_habref_data.log
+
+    # type correspondance
+    export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -c "\copy ref_habitat.habref FROM 'HABREF_TYPE_REL_40.csv' with (format csv,header true, delimiter ';');" &>> var/log/install_habref_data.log
+
 
 
     if $insert_geonatureatlas_data
