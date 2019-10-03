@@ -80,44 +80,11 @@ WITH  CSV HEADER
 DELIMITER E';'  encoding 'UTF-8';
 
 
--- INSERT INTO habref_corresp_hab
--- SELECT 
---     cd_corresp_hab,
---     cd_hab_entre ,
---     cd_hab_sortie ,
---     cd_type_relation ,
---     lb_condition ,
---     lb_remarques,
---     validite ,
---     cd_typo_entre ,
---     cd_typo_sortie ,
---     to_timestamp(date_crea, 'YYYYMMDDHH24MISS') ,
---     to_timestamp(date_modif, 'YYYYMMDDHH24MISS') ,
---     diffusion 
--- FROM import_habref_corresp_hab;
+-- suppression des colonnes inutiles (mise pour lisibilité dans HABREF)
+ALTER TABLE cor_habref_description DROP COLUMN cd_typo;
+ALTER TABLE cor_habref_description DROP COLUMN lb_code;
+ALTER TABLE cor_habref_description DROP COLUMN lb_hab_field;
 
--- INSERT INTO ref_habitat.habref_corresp_taxon
--- SELECT
---     cd_corresp_tax,
---     cd_hab_entre ,
---     cd_nom,
---     cd_type_relation,
---     lb_condition,
---     lb_remarques,
---     nom_cite,
---     validite,
+-- TODO ? conversion en timestamp ?
 --     to_timestamp(date_crea, 'YYYYMMDDHH24MISS') ,
 --     to_timestamp(date_modif, 'YYYYMMDDHH24MISS')
---   FROM ref_habitat.import_habref_corresp_taxon;
-
--- INSERT INTO habref_typo_rel
--- SELECT
---     cd_type_rel,
---     lb_type_rel,
---     lb_rel,
---     corresp_hab ,
---     corresp_esp ,
---     corresp_syn,
---     to_timestamp(date_crea, 'YYYYMMDDHH24MISS') ,
---     to_timestamp(date_modif, 'YYYYMMDDHH24MISS')
---   FROM  import_habref_typo_rel;

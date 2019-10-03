@@ -145,6 +145,9 @@ CREATE TABLE cor_habref_description(
     cd_hab_description integer NOT NULL,
     cd_hab integer NOT NULL,
     cd_hab_field integer NOT NULL,
+    cd_typo integer,
+    lb_code character varying(50),
+    lb_hab_field character varying(200),
     valeurs text
 );
 COMMENT ON TABLE ref_habitat.cor_habref_description IS 'Table de correspondance entre un habitat et les champs additionnels décrit dans la table typoref_fields - Table habref_description de HABREF' ;
@@ -168,8 +171,8 @@ COMMENT ON TABLE ref_habitat.habref_sources IS 'Table des sources décrivant les
 
 CREATE TABLE cor_hab_source(
     cd_hab_lien_source integer NOT NULL,
-    type_lien character varying(7) NOT NULL,
     cd integer NOT NULL,
+    type_lien character varying(7) NOT NULL,
     cd_source integer NOT NULL,
     origine character varying(5),
     date_crea text,
