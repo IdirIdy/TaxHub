@@ -63,7 +63,8 @@ CREATE TABLE habref (
 COMMENT ON TABLE ref_habitat.habref IS 'habref, table HABREF référentiel HABREF 4.0 INPN';
 
 
-CREATE TABLE import_habref_corresp_hab(
+
+CREATE TABLE habref_corresp_hab(
     cd_corresp_hab integer NOT NULL,
     cd_hab_entre integer NOT NULL,
     cd_hab_sortie integer,
@@ -79,24 +80,8 @@ CREATE TABLE import_habref_corresp_hab(
 );
 COMMENT ON TABLE ref_habitat.habref_corresp_hab IS 'Table de corespondances entres les habitats de differentes typologie';
 
-CREATE TABLE habref_corresp_hab(
-    cd_corresp_hab integer NOT NULL,
-    cd_hab_entre integer NOT NULL,
-    cd_hab_sortie integer,
-    cd_type_relation integer,
-    lb_condition character varying(1000),
-    lb_remarques character varying(4000),
-    validite boolean,
-    cd_typo_entre integer,
-    cd_typo_sortie integer,
-    date_crea timestamp without time zone,
-    date_modif timestamp without time zone,
-    diffusion boolean
 
-);
-COMMENT ON TABLE ref_habitat.habref_corresp_hab IS 'Table de corespondances entres les habitats de differentes typologie';
-
-CREATE TABLE import_habref_corresp_taxon(
+CREATE TABLE habref_corresp_taxon(
     cd_corresp_tax integer NOT NULL,
     cd_hab_entre integer NOT NULL,
     cd_nom integer,
@@ -110,30 +95,87 @@ CREATE TABLE import_habref_corresp_taxon(
 );
 COMMENT ON TABLE ref_habitat.habref_corresp_taxon IS 'Table de corespondances entres les habitats les taxon (table taxref)';
 
-CREATE TABLE habref_corresp_taxon(
-    cd_corresp_tax integer NOT NULL,
-    cd_hab_entre integer NOT NULL,
-    cd_nom integer,
-    cd_type_relation integer,
-    lb_condition character varying(1000),
-    lb_remarques character varying(4000),
-    nom_cite character varying(500),
-    validite boolean,
-    date_crea timestamp without time zone,
-    date_modif timestamp without time zone
-);
-COMMENT ON TABLE ref_habitat.habref_corresp_taxon IS 'Table de corespondances entres les habitats les taxon (table taxref)';
 
-CREATE TABLE habref_typo_rel(
+CREATE TABLE bib_habref_typo_rel(
     cd_type_rel integer,
-    lb_type_rel character varying(50),
-    lb_rel character varying(100),
+    lb_type_rel character varying(200),
+    lb_rel character varying(1000),
     corresp_hab boolean,
     corresp_esp boolean,
-    date_crea timestamp without time zone,
-    date_modif timestamp without time zone
+    corresp_syn boolean,
+    date_crea text,
+    date_modif text
 );
-COMMENT ON TABLE ref_habitat.habref_typo_rel IS 'Bibliothèque des type de relations entre habitats';
+COMMENT ON TABLE ref_habitat.bib_habref_typo_rel IS 'Bibliothèque des types de relations entre habitats - Table habref_typo_rel de HABREF';
+
+
+CREATE TABLE bib_habref_statuts(
+    statut character varying(1) NOT NULL,
+    description character varying(50) NOT NULL,
+    definition character varying(500) NOT NULL,
+    ordre integer
+);
+COMMENT ON TABLE ref_habitat.bib_habref_statuts IS 'Bibliothèque des types statut d''habitat - Présence, absence ... - Table habref_status de HABREF';
+
+CREATE TABLE cor_habref_terr_statut(
+    cd_hab_ter integer NOT NULL,
+    cd_hab integer NOT NULL,
+    cd_sig_terr character varying(20) NOT NULL,
+    cd_statut_presence character varying(1),
+    date_crea text,
+    date_modif text
+);
+COMMENT ON TABLE ref_habitat.cor_habref_terr_statut IS 'Table de correspondance entre un habitat, un territoire et son statut - Table habref_terr de HABREF' ;
+
+CREATE TABLE typoref_fields(
+    cd_hab_field integer NOT NULL,
+    cd_typo integer NOT NULL,
+    lb_hab_field character varying(30) NOT NULL,
+    format_hab_field character varying(200),
+    descript_hab_field character varying(3000),
+    ordre_hab_field integer,
+    length_hab_field integer,
+    lb_label character varying(200),
+    date_crea text,
+    date_modif text
+);
+COMMENT ON TABLE ref_habitat.cor_habref_terr_statut IS 'Table de descritpion des champs additionnels de chaque typologie.' ;
+
+CREATE TABLE cor_habref_description(
+    cd_hab_description integer NOT NULL,
+    cd_hab integer NOT NULL,
+    cd_hab_field integer NOT NULL,
+    valeurs text
+);
+COMMENT ON TABLE ref_habitat.cor_habref_description IS 'Table de correspondance entre un habitat et les champs additionnels décrit dans la table typoref_fields - Table habref_description de HABREF' ;
+
+
+CREATE TABLE habref_sources(
+    cd_source integer NOT NULL,
+    cd_doc integer,
+    type_source character varying(1),
+    auteur_source character varying(255),
+    date_source integer,
+    lb_source character varying(1000),
+    lb_source_complet character varying(2000),
+    titre character varying(1000),
+    link character varying(1000),
+    date_crea text,
+    date_modif text
+);
+COMMENT ON TABLE ref_habitat.habref_sources IS 'Table des sources décrivant les habitats' ;
+
+
+CREATE TABLE cor_hab_source(
+    cd_hab_lien_source integer NOT NULL,
+    type_lien character varying(7) NOT NULL,
+    cd integer NOT NULL,
+    cd_source integer NOT NULL,
+    origine character varying(5),
+    date_crea text,
+    date_modif text
+);
+COMMENT ON TABLE ref_habitat.cor_hab_source IS 'Table de corespondance entre une unité (cd_hab, cd_coresp_hab, cd_coresp_taxon) et une source - Table habref_lien_source de HABREF';
 
 
 CREATE TABLE bib_list_habitat (
@@ -174,6 +216,28 @@ ALTER TABLE ONLY bib_list_habitat
 
 ALTER TABLE ONLY cor_list_habitat 
     ADD CONSTRAINT pk_cor_list_habitat PRIMARY KEY (id_cor_list);
+
+ALTER TABLE ONLY bib_habref_statuts
+    ADD CONSTRAINT pk_bib_habref_statuts PRIMARY KEY (statut);
+
+ALTER TABLE ONLY typoref_fields
+    ADD CONSTRAINT pk_typoref_fields PRIMARY KEY (cd_hab_field);
+
+ALTER TABLE ONLY cor_habref_description
+    ADD CONSTRAINT pk_cor_habref_description PRIMARY KEY (cd_hab_description);
+
+ALTER TABLE ONLY cor_hab_source
+    ADD CONSTRAINT pk_cor_hab_source PRIMARY KEY (cd_hab_lien_source);
+
+ALTER TABLE ONLY bib_habref_typo_rel
+    ADD CONSTRAINT pk_bib_habref_typo_rel PRIMARY KEY (cd_type_rel);
+
+ALTER TABLE ONLY cor_habref_terr_statut
+    ADD CONSTRAINT pk_cor_habref_terr_statut PRIMARY KEY (cd_hab_ter);
+
+ALTER TABLE ONLY habref_sources
+    ADD CONSTRAINT pk_habref_sources PRIMARY KEY (cd_source); 
+
 ---------------
 --FOREIGN KEY--
 ---------------
@@ -205,8 +269,25 @@ ALTER TABLE ONLY habref_corresp_taxon
 ALTER TABLE ONLY habref_corresp_taxon
     ADD CONSTRAINT fk_habref_corresp_tax_cd_hab_entre FOREIGN KEY (cd_hab_entre) REFERENCES ref_habitat.habref (cd_hab) ON UPDATE CASCADE;
 
-ALTER TABLE ONLY habref_corresp_taxon
-    ADD CONSTRAINT fk_habref_corresp_tax_cd_nom FOREIGN KEY (cd_nom) REFERENCES taxonomie.taxref (cd_nom) ON UPDATE CASCADE;
+-- ALTER TABLE ONLY habref_corresp_taxon
+--     ADD CONSTRAINT fk_habref_corresp_tax_cd_nom FOREIGN KEY (cd_nom) REFERENCES taxonomie.taxref (cd_nom) ON UPDATE CASCADE;
+
+ALTER TABLE ONLY cor_habref_terr_statut
+    ADD CONSTRAINT fk_cor_habref_terr_statut_cd_hab FOREIGN KEY (cd_hab) REFERENCES ref_habitat.habref (cd_hab) ON UPDATE CASCADE;
+
+ALTER TABLE ONLY cor_habref_terr_statut
+    ADD CONSTRAINT fk_cor_habref_terr_statut_cd_statut_presence FOREIGN KEY (cd_statut_presence) REFERENCES ref_habitat.bib_habref_statuts (statut) ON UPDATE CASCADE;
+
+ALTER TABLE ONLY cor_habref_description
+    ADD CONSTRAINT fk_cor_habref_description_cd_hab FOREIGN KEY (cd_hab) REFERENCES ref_habitat.habref (cd_hab) ON UPDATE CASCADE ON DELETE CASCADE;
+
+ALTER TABLE ONLY cor_habref_description
+    ADD CONSTRAINT fk_cor_habref_description_cd_hab_field FOREIGN KEY (cd_hab_field) REFERENCES ref_habitat.typoref_fields (cd_hab_field) ON UPDATE CASCADE ON DELETE CASCADE;
+
+ALTER TABLE ONLY cor_hab_source
+    ADD CONSTRAINT fk_cor_cor_hab_source_cd_source FOREIGN KEY (cd_source) REFERENCES ref_habitat.habref_sources (cd_source) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
 ----------
 --UNIQUE--
 ----------
