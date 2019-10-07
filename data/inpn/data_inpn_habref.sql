@@ -86,3 +86,15 @@ ALTER TABLE cor_habref_description DROP COLUMN lb_hab_field;
 -- TODO ? conversion en timestamp ?
 --     to_timestamp(date_crea, 'YYYYMMDDHH24MISS') ,
 --     to_timestamp(date_modif, 'YYYYMMDDHH24MISS')
+
+
+-- CREATE TABLE AUTOCOMPLETE
+
+INSERT INTO ref_habitat.autocomplete_habitat
+SELECT 
+cd_hab,
+lb_code,
+lb_nom_typo,
+concat(lb_code, '-', lb_hab_fr, ' ', lb_hab_fr_complet)
+FROM ref_habitat.habref h
+JOIN ref_habitat.typoref t ON t.cd_typo = h.cd_typo
