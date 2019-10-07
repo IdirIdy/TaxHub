@@ -10,18 +10,32 @@ SET search_path = ref_habitat, pg_catalog;
 
 TRUNCATE TABLE habref CASCADE;
 TRUNCATE TABLE typoref CASCADE;
-TRUNCATE TABLE habref_typo_rel CASCADE;
-TRUNCATE TABLE habref_corresp_taxon;
-TRUNCATE TABLE habref_corresp_hab;
+TRUNCATE TABLE bib_habref_typo_rel CASCADE;
+TRUNCATE TABLE habref_corresp_taxon CASCADE;
+TRUNCATE TABLE habref_corresp_hab CASCADE;
 
-TRUNCATE TABLE bib_habref_typo_rel;
 
-TRUNCATE TABLE bib_habref_statuts;
-TRUNCATE TABLE cor_habref_terr_statut;
+TRUNCATE TABLE bib_habref_statuts CASCADE;
+TRUNCATE TABLE cor_habref_terr_statut CASCADE;
 TRUNCATE TABLE typoref_fields CASCADE;
 TRUNCATE TABLE cor_habref_description CASCADE;
 TRUNCATE TABLE habref_sources CASCADE;
 TRUNCATE TABLE cor_hab_source CASCADE;
+
+COPY bib_habref_typo_rel 
+FROM  '/tmp/habref/HABREF_TYPE_REL_40.csv'
+WITH  CSV HEADER 
+DELIMITER E';'  encoding 'UTF-8';
+
+COPY bib_habref_statuts 
+FROM  '/tmp/habref/HABREF_STATUTS_40.csv'
+WITH  CSV HEADER 
+DELIMITER E';'  encoding 'UTF-8';
+
+COPY habref_sources 
+FROM  '/tmp/habref/HABREF_SOURCES_40.csv'
+WITH  CSV HEADER 
+DELIMITER E';'  encoding 'UTF-8';
 
 COPY typoref 
 FROM '/tmp/habref/TYPOREF_40.csv' 
@@ -43,17 +57,6 @@ FROM  '/tmp/habref/HABREF_CORRESP_TAXON_40.csv'
 WITH  CSV HEADER 
 DELIMITER E';'  encoding 'UTF-8';
 
-
-COPY bib_habref_typo_rel 
-FROM  '/tmp/habref/HABREF_TYPE_REL_40.csv'
-WITH  CSV HEADER 
-DELIMITER E';'  encoding 'UTF-8';
-
-COPY bib_habref_statuts 
-FROM  '/tmp/habref/HABREF_STATUTS_40.csv'
-WITH  CSV HEADER 
-DELIMITER E';'  encoding 'UTF-8';
-
 COPY cor_habref_terr_statut 
 FROM  '/tmp/habref/HABREF_TERR_40.csv'
 WITH  CSV HEADER 
@@ -66,11 +69,6 @@ DELIMITER E';'  encoding 'UTF-8';
 
 COPY cor_habref_description 
 FROM  '/tmp/habref/HABREF_DESCRIPTION_NOHTML_40.csv'
-WITH  CSV HEADER 
-DELIMITER E';'  encoding 'UTF-8';
-
-COPY habref_sources 
-FROM  '/tmp/habref/HABREF_SOURCES_40.csv'
 WITH  CSV HEADER 
 DELIMITER E';'  encoding 'UTF-8';
 

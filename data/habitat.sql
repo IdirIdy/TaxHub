@@ -195,6 +195,13 @@ CREATE TABLE cor_list_habitat (
 COMMENT ON TABLE ref_habitat.cor_list_habitat IS 'Habitat de chaque liste';
 
 
+CREATE TABLE autocomplete_habitat(
+    cd_hab integer NOT NULL,
+    lb_code character varying(50) NOT NULL,
+    lb_nom_typo character varying(100) NOT NULL,
+    search_name character varying(1000) NOT NULL
+);
+
 ---------------
 --PRIMARY KEY--
 ---------------
@@ -208,8 +215,8 @@ ALTER TABLE ONLY habref
 ALTER TABLE ONLY habref_corresp_taxon 
     ADD CONSTRAINT pk_habref_corresp_taxon PRIMARY KEY (cd_corresp_tax);
 
-ALTER TABLE ONLY habref_typo_rel 
-    ADD CONSTRAINT pk_habref_typo_rel PRIMARY KEY (cd_type_rel);
+ALTER TABLE ONLY bib_habref_typo_rel 
+    ADD CONSTRAINT pk_bib_habref_typo_rel PRIMARY KEY (cd_type_rel);
 
 ALTER TABLE ONLY habref_corresp_hab 
     ADD CONSTRAINT pk_habref_corresp_hab PRIMARY KEY (cd_corresp_hab);
@@ -232,14 +239,15 @@ ALTER TABLE ONLY cor_habref_description
 ALTER TABLE ONLY cor_hab_source
     ADD CONSTRAINT pk_cor_hab_source PRIMARY KEY (cd_hab_lien_source);
 
-ALTER TABLE ONLY bib_habref_typo_rel
-    ADD CONSTRAINT pk_bib_habref_typo_rel PRIMARY KEY (cd_type_rel);
 
 ALTER TABLE ONLY cor_habref_terr_statut
     ADD CONSTRAINT pk_cor_habref_terr_statut PRIMARY KEY (cd_hab_ter);
 
 ALTER TABLE ONLY habref_sources
     ADD CONSTRAINT pk_habref_sources PRIMARY KEY (cd_source); 
+
+ALTER TABLE ONLY autocomplete_habitat
+    ADD CONSTRAINT pk_autocomplete_habitat PRIMARY KEY (cd_hab); 
 
 ---------------
 --FOREIGN KEY--
@@ -253,12 +261,8 @@ ALTER TABLE ONLY cor_list_habitat
     ADD CONSTRAINT fk_cor_list_habitat_cd_hab FOREIGN KEY (cd_hab) REFERENCES ref_habitat.habref (cd_hab) ON UPDATE CASCADE;
 
 
-ALTER TABLE ONLY habref 
-    ADD CONSTRAINT fk_typoref FOREIGN KEY (cd_typo) REFERENCES ref_habitat.typoref (cd_typo) ON UPDATE CASCADE;
-
-
 ALTER TABLE ONLY habref_corresp_hab
-    ADD CONSTRAINT fk_habref_corresp_hab_cd_type_rel FOREIGN KEY (cd_type_relation) REFERENCES ref_habitat.habref_typo_rel (cd_type_rel) ON UPDATE CASCADE;
+    ADD CONSTRAINT fk_habref_corresp_hab_cd_type_rel FOREIGN KEY (cd_type_relation) REFERENCES ref_habitat.bib_habref_typo_rel (cd_type_rel) ON UPDATE CASCADE;
 
 ALTER TABLE ONLY habref_corresp_hab
     ADD CONSTRAINT fk_habref_corresp_hab_cd_hab_entre FOREIGN KEY (cd_hab_entre) REFERENCES ref_habitat.habref (cd_hab) ON UPDATE CASCADE;
@@ -267,7 +271,7 @@ ALTER TABLE ONLY habref_corresp_hab
     ADD CONSTRAINT fk_habref_corresp_hab_cd_hab_sortie FOREIGN KEY (cd_hab_sortie) REFERENCES ref_habitat.habref (cd_hab) ON UPDATE CASCADE;
 
 ALTER TABLE ONLY habref_corresp_taxon
-    ADD CONSTRAINT fk_habref_corresp_tax_cd_typ_rel FOREIGN KEY (cd_type_relation) REFERENCES ref_habitat.habref_typo_rel (cd_type_rel) ON UPDATE CASCADE;
+    ADD CONSTRAINT fk_habref_corresp_tax_cd_typ_rel FOREIGN KEY (cd_type_relation) REFERENCES ref_habitat.bib_habref_typo_rel (cd_type_rel) ON UPDATE CASCADE;
 
 ALTER TABLE ONLY habref_corresp_taxon
     ADD CONSTRAINT fk_habref_corresp_tax_cd_hab_entre FOREIGN KEY (cd_hab_entre) REFERENCES ref_habitat.habref (cd_hab) ON UPDATE CASCADE;
