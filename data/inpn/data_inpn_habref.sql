@@ -95,6 +95,6 @@ SELECT
 cd_hab,
 lb_code,
 lb_nom_typo,
-concat(lb_code, '-', lb_hab_fr, ' ', lb_hab_fr_complet)
+concat(lb_code, ' - ', lb_hab_fr, ' ', lb_hab_fr_complet)
 FROM ref_habitat.habref h
 JOIN ref_habitat.typoref t ON t.cd_typo = h.cd_typo
