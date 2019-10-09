@@ -197,7 +197,7 @@ COMMENT ON TABLE ref_habitat.cor_list_habitat IS 'Habitat de chaque liste';
 
 CREATE TABLE autocomplete_habitat(
     cd_hab integer NOT NULL,
-    lb_code character varying(50) NOT NULL,
+    lb_code character varying(50),
     lb_nom_typo character varying(100) NOT NULL,
     search_name character varying(1000) NOT NULL
 );
