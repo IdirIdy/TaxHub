@@ -373,3 +373,13 @@ class CorListHabitat(serializableModel, db.Model):
     id_list = db.Column(db.Integer, ForeignKey("ref_habitat.bib_list_habitat.id_list"))
     cd_hab = db.Column(db.Integer, ForeignKey("ref_habitat.habref.cd_hab"))
 
+
+class AutoCompleteHabitat(serializableModel, db.Model):
+    __tablename__ = "autocomplete_habitat"
+    __table_args__ = {"schema": "ref_habitat"}
+    cd_hab = db.Column(db.Integer, primary_key=True)
+    cd_typo = db.Column(db.Integer)
+    lb_code = db.Column(db.Unicode)
+    lb_nom_typo = db.Column(db.Unicode)
+    search_name = db.Column(db.Unicode)
+
