@@ -93,7 +93,7 @@ ALTER TABLE cor_habref_description DROP COLUMN lb_hab_field;
 INSERT INTO ref_habitat.autocomplete_habitat
 SELECT 
 cd_hab,
-cd_typo,
+h.cd_typo,
 lb_code,
 lb_nom_typo,
 concat(lb_code, ' - ', lb_hab_fr, ' ', lb_hab_fr_complet)
