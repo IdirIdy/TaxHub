@@ -4,7 +4,14 @@ from sqlalchemy.orm.exc import NoResultFound
 
 
 from ..utils.utilssqlalchemy import json_resp, serializeQuery, serializeQueryOneResult
-from .models import Habref, CorListHabitat, AutoCompleteHabitat, TypoRef
+from .models import (
+    Habref,
+    CorListHabitat,
+    AutoCompleteHabitat,
+    TypoRef,
+    CorespHab,
+    BibHabrefTypoRel,
+)
 
 try:
     from urllib.parse import unquote
@@ -45,6 +52,19 @@ def getSearchInField(field, ilike):
         return [d[0].as_dict() for d in data]
     else:
         "No column found in Taxref for {}".format(field), 500
+
+
+@adresses.route("/habitat/<int:cd_hab>", methods=["GET"])
+@json_resp
+def get_hab(cd_hab):
+    """
+    Get one habitat with its corresponfdance
+    """
+    one_hab = db.session.query(Habref).get(cd_hab).as_dict(True)
+    for cor in one_hab["correspondances"]:
+        hab_sortie = db.session.query(Habref).get(cor["cd_hab_sortie"]).as_dict(True)
+        cor["habref"] = hab_sortie
+    return one_hab
 
 
 @adresses.route("/habitats/list/<int:id_list>", methods=["GET"])
@@ -129,4 +149,30 @@ def get_typo():
     data = q.order_by(TypoRef.lb_nom_typo).all()
 
     return [d.as_dict() for d in data]
+
+
+@adresses.route("/correspondance/<int:cd_hab>", methods=["GET"])
+@json_resp
+def get_coresp(cd_hab):
+    """
+    Get all correspondance
+
+    :returns: 
+    """
+    q = (
+        db.session.query(CorespHab, BibHabrefTypoRel, Habref, TypoRef)
+        .join(
+            BibHabrefTypoRel, CorespHab.cd_type_relation == BibHabrefTypoRel.cd_type_rel
+        )
+        .join(Habref, Habref.cd_hab == CorespHab.cd_hab_sortie)
+        .join(TypoRef, TypoRef.cd_typo == Habref.cd_typo)
+        .filter(CorespHab.cd_hab_entre == cd_hab)
+    )
+
+    data = []
+    for d in q.all():
+        temp = {**d[0].as_dict(), **d[1].as_dict(), **d[2].as_dict(), **d[3].as_dict()}
+        data.append(temp)
+
+    return data
 

@@ -1,9 +1,10 @@
 # coding: utf8
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import ForeignKey, Sequence
+from utils_flask_sqla.serializers import serializable
+
 
 from ..utils.genericmodels import serializableModel
-
 from . import db
 
 
@@ -311,7 +312,41 @@ class BibTaxrefLR(serializableModel, db.Model):
     desc_categorie_lr = db.Column(db.Unicode)
 
 
-class TypoRef(serializableModel, db.Model):
+@serializable
+class BibHabrefTypoRel(db.Model):
+    __tablename__ = "bib_habref_typo_rel"
+    __table_args__ = {"schema": "ref_habitat"}
+    cd_type_rel = db.Column(db.Integer, primary_key=True)
+    lb_type_rel = db.Column(db.Unicode)
+    lb_rel = db.Column(db.Unicode)
+    corresp_hab = db.Column(db.Boolean)
+    corresp_esp = db.Column(db.Boolean)
+    corresp_syn = db.Column(db.Boolean)
+
+
+@serializable
+class CorespHab(db.Model):
+    __tablename__ = "habref_corresp_hab"
+    __table_args__ = {"schema": "ref_habitat"}
+    cd_corresp_hab = db.Column(db.Integer, primary_key=True)
+    cd_hab_entre = db.Column(db.Integer, ForeignKey("ref_habitat.habref.cd_hab"))
+    cd_hab_sortie = db.Column(db.Integer)
+    cd_type_relation = db.Column(
+        db.Integer, ForeignKey("ref_habitat.bib_habref_typo_rel.cd_type_rel")
+    )
+    lb_condition = db.Column(db.Unicode)
+    lb_remarques = db.Column(db.Unicode)
+    validite = db.Column(db.Boolean)
+    cd_typo_entre = db.Column(db.Integer)
+    cd_typo_sortie = db.Column(db.Integer)
+    date_crea = db.Column(db.Integer)
+    diffusion = db.Column(db.Boolean)
+
+    type_rel = db.relationship("BibHabrefTypoRel", lazy="select")
+
+
+@serializable
+class TypoRef(db.Model):
     __tablename__ = "typoref"
     __table_args__ = {"schema": "ref_habitat"}
     cd_typo = db.Column(db.Integer, primary_key=True)
@@ -340,7 +375,8 @@ class TypoRef(serializableModel, db.Model):
     niveau_inpn = db.Column(db.Integer)
 
 
-class Habref(serializableModel, db.Model):
+@serializable
+class Habref(db.Model):
     __tablename__ = "habref"
     __table_args__ = {"schema": "ref_habitat"}
     cd_hab = db.Column(db.Integer, primary_key=True)
@@ -358,15 +394,20 @@ class Habref(serializableModel, db.Model):
     france = db.Column(db.Unicode)
     lb_description = db.Column(db.Unicode)
 
+    typo = db.relationship("TypoRef", lazy="select")
+    correspondances = db.relationship("CorespHab", lazy="select")
 
-class BibListHabitat(serializableModel, db.Model):
+
+@serializable
+class BibListHabitat(db.Model):
     __tablename__ = "bib_list_habitat"
     __table_args__ = {"schema": "ref_habitat"}
     id_list = db.Column(db.Integer, primary_key=True)
     list_name = db.Column(db.Unicode)
 
 
-class CorListHabitat(serializableModel, db.Model):
+@serializable
+class CorListHabitat(db.Model):
     __tablename__ = "cor_list_habitat"
     __table_args__ = {"schema": "ref_habitat"}
     id_cor_list = db.Column(db.Integer, primary_key=True)
@@ -374,7 +415,8 @@ class CorListHabitat(serializableModel, db.Model):
     cd_hab = db.Column(db.Integer, ForeignKey("ref_habitat.habref.cd_hab"))
 
 
-class AutoCompleteHabitat(serializableModel, db.Model):
+@serializable
+class AutoCompleteHabitat(db.Model):
     __tablename__ = "autocomplete_habitat"
     __table_args__ = {"schema": "ref_habitat"}
     cd_hab = db.Column(db.Integer, primary_key=True)
