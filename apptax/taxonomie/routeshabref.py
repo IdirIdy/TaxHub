@@ -58,7 +58,7 @@ def getSearchInField(field, ilike):
 @json_resp
 def get_hab(cd_hab):
     """
-    Get one habitat with its corresponfdance
+    Get one habitat with its correspondances
     """
     one_hab = db.session.query(Habref).get(cd_hab).as_dict(True)
     for cor in one_hab["correspondances"]:
